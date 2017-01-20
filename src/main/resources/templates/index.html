@@ -9,24 +9,31 @@
 
 <body>
 
-    <div class="row">
-        <form class="navbar-form navbar-left" role="search" method="get" >
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search Make" name="q" />
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="row">
+                <form class="navbar-form navbar-left" role="search" method="get" >
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search Make" name="q" />
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                    <a th:if="${isQ}" th:href="@{/}" class="btn btn-default">Clear Search</a>
+                </form>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-    </div>
+        </div>
+    </nav>
 
-<br />
+    <br />
 
-<div class="container">
+    <div class="container">
 
     <div class="row">
         <div class="col-md-8">
             <div class="bike-list">
 
-            <h1>Bikes</h1>
+            <h1 th:if="${not isQ}">Bikes</h1>
+            <h1 th:if="${isQ}" th:text="'Search Results for: ' + ${q}">Search Heading</h1>
+            <h1 th:if="${not bikeListHasContent}">No bikes match your search</h1>
             <table class="table">
 
                 <thead>
@@ -43,7 +50,75 @@
                 </thead>
                 <tbody>
                 <tr th:each="bike : ${bikeList}">
-                    <td><a th:text="${bike.make}" th:href="@{'/bike/' + ${bike.id}}">detail view</a></td>
+                    <td>
+                        <!-- Button trigger Bike Detail modal -->
+                        <a th:text="${bike.make}"  data-toggle="modal" th:attr="data-target='#bikeModal'+${bike.id}">detail view</a>
+
+                        <!-- Bike Detail Modal -->
+                        <div class="modal fade" th:id="'bikeModal'+${bike.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">Bike Detail</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h1 th:text="${bike.make}+' '+${bike.model}">make model</h1>
+
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <table class="table">
+                                                    <tr>
+                                                        <th>Make</th>
+                                                        <td th:text="${bike.make}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Model</th>
+                                                        <td th:text="${bike.model}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Year</th>
+                                                        <td th:text="${bike.modelYear}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Wheel Size</th>
+                                                        <td th:text="${bike.wheelSize}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Frame Type</th>
+                                                        <td th:text="${bike.frameType}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Build Kit</th>
+                                                        <td th:text="${bike.buildKit}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Created</th>
+                                                        <td th:text="${{bike.created}}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Updated</th>
+                                                        <td th:text="${{bike.updated}}"></td>
+                                                    </tr>
+                                                </table>
+
+                                            </div>
+
+                                            <div class="col-sm-8 text-center">
+                                                <img th:src="@{'/static/bike_portal.gif'}" alt="Bike Portal" class="bike-gif"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </td>
                     <td th:text="${bike.model}"></td>
                     <td th:text="${bike.modelYear}"></td>
                     <td th:text="${bike.wheelSize}"></td>
@@ -54,22 +129,22 @@
                     </td>
                     <td>
                         <!-- Button trigger delete modal -->
-                        <button type="button" class="btn btn-danger" data-toggle="modal" th:attr="data-target='#bikeModal'+${bike.id}">
+                        <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" th:attr="data-target='#bikeDeleteModal'+${bike.id}">
                             X
                         </button>
 
                         <!-- Delete Confirmation Modal -->
-                        <div class="modal fade" th:id="'bikeModal'+${bike.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal fade" th:id="'bikeDeleteModal'+${bike.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                             <div class="modal-dialog modal-sm" role="document">
                                 <div class="modal-content">
 
                                     <div class="modal-body">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                         <br/>
-                                        <p>Are you sure you want to delete this bike?</p>
+                                        <h3>Are you sure you want to delete this bike?</h3>
 
                                         <form th:action="@{'/delete/' + ${bike.id}}" method="post">
-                                            <input type="submit" value="Delete" class="btn btn-danger btn-xs"/>
+                                            <input type="submit" value="Delete" class="btn btn-danger"/>
                                         </form>
 
                                     </div>
@@ -86,25 +161,49 @@
             </div>
 
             <!-- Pagination -->
-            <div class="text-center">
-                <ul class="pagination">
-                    <li th:class="${bikeList.number eq 0} ? 'disabled' : ''">
-                        <a th:if="${not firstPage}" th:href="@{'?page=' + ${bikeList.number}}">Previous</a>
-                        <a th:if="${firstPage}" href="#">Previous</a>
-                    </li>
-                    <li th:each="pageNo : ${#numbers.sequence(0, bikeList.totalPages - 1)}" th:class="${bikeList.number eq pageNo}? 'active' : ''">
-                        <a th:if="${bikeList.number  eq pageNo}" href="#">
-                            <span th:text="${pageNo + 1}"></span>
-                        </a>
-                        <a th:if="${not (bikeList.number  eq pageNo)}" th:href="@{'?page=' + ${pageNo+1}}">
-                            <span th:text="${pageNo + 1}"></span>
-                        </a>
-                    </li>
-                    <li th:class="${bikeList.number + 1 ge bikeList.totalPages} ? 'disabled' : ''">
-                        <a th:if="${not lastPage}" th:href="@{'?page=' + ${bikeList.number+2}}">Next</a>
-                        <a th:if="${lastPage}" href="#">Next</a>
-                    </li>
-                </ul>
+            <div th:if="${bikeListHasContent}">
+                <div class="text-center">
+
+                    <!-- No Search -->
+                    <ul th:unless="${isQ}" class="pagination">
+                        <li th:class="${bikeList.number eq 0} ? 'disabled' : ''">
+                            <a th:if="${not firstPage}" th:href="@{'?page=' + ${bikeList.number}}">Previous</a>
+                            <a th:if="${firstPage}" href="#">Previous</a>
+                        </li>
+                        <li th:each="pageNo : ${#numbers.sequence(0, bikeList.totalPages - 1)}" th:class="${bikeList.number eq pageNo}? 'active' : ''">
+                            <a th:if="${bikeList.number  eq pageNo}" href="#">
+                                <span th:text="${pageNo + 1}"></span>
+                            </a>
+                            <a th:if="${not (bikeList.number  eq pageNo)}" th:href="@{'?page=' + ${pageNo+1}}">
+                                <span th:text="${pageNo + 1}"></span>
+                            </a>
+                        </li>
+                        <li th:class="${bikeList.number + 1 ge bikeList.totalPages} ? 'disabled' : ''">
+                            <a th:if="${not lastPage}" th:href="@{'?page=' + ${bikeList.number+2}}">Next</a>
+                            <a th:if="${lastPage}" href="#">Next</a>
+                        </li>
+                    </ul>
+
+                    <!-- Yes Search -->
+                    <ul th:if="${isQ and bikeListHasContent}" class="pagination">
+                        <li th:class="${bikeList.number eq 0} ? 'disabled' : ''">
+                            <a th:if="${not firstPage}" th:href="@{/(q = ${q}, page = ${bikeList.number})}">Previous</a>
+                            <a th:if="${firstPage}" href="#">Previous</a>
+                        </li>
+                        <li th:each="pageNo : ${#numbers.sequence(0, bikeList.totalPages - 1)}" th:class="${bikeList.number eq pageNo}? 'active' : ''">
+                            <a th:if="${bikeList.number  eq pageNo}" href="#">
+                                <span th:text="${pageNo + 1}"></span>
+                            </a>
+                            <a th:if="${not (bikeList.number  eq pageNo)}" th:href="@{/(q = ${q}, page = ${pageNo+1})}">
+                                <span th:text="${pageNo + 1}"></span>
+                            </a>
+                        </li>
+                        <li th:class="${bikeList.number + 1 ge bikeList.totalPages} ? 'disabled' : ''">
+                            <a th:if="${not lastPage}" th:href="@{/(q = ${q}, page = ${bikeList.number+2})}">Next</a>
+                            <a th:if="${lastPage}" href="#">Next</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
 
@@ -112,15 +211,17 @@
         </div>
         <div class="col-md-4 boarder-left">
             <h1>Add Bike</h1>
-            <form action="#" th:action="@{/addBike}" th:object="${bike}" method="post">
+            <form action="#" th:action="@{/addBike}" th:object="${bikeForm}" method="post">
+
+
                 <div class="row">
                     <div class="form-group col-xs-6">
                         <label th:for="*{make}">Make</label>
-                        <input type="text" th:field="*{make}" class="form-control" required="true" />
+                        <input type="text" th:field="*{make}" class="form-control" required="true" maxlength="25"/>
                     </div>
                     <div class="form-group col-xs-6">
                         <label th:for="*{model}">Model</label>
-                        <input type="text" th:field="*{model}" class="form-control" required="true" />
+                        <input type="text" th:field="*{model}" class="form-control" required="true" maxlength="25"/>
                     </div>
                 </div>
                 <div class="row">
@@ -161,7 +262,6 @@
         </div>
     </div>
 </div>
-
 
 </body>
 

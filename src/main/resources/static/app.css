@@ -2,5 +2,8 @@
     border-left: solid thick #f2f2f2;
 }
 .bike-list {
-    min-height: 341px;
+    min-height: 285px;
+}
+.bike-gif {
+    max-width: 55rem;
 }

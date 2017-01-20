@@ -1,6 +1,9 @@
 package com.firstweek.model;
 
 
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,15 +17,19 @@ public class Bike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Size(max=20)
+    @Size(min=1, max=25, message = "Make length must be between 1 and 25 characters")
+    @NotEmpty(message = "Make cannot be empty")
     private String make;
-    @Size(max=20)
+    @Size(min=1, max=25, message = "Model length must be between 1 and 25 characters")
+    @NotEmpty(message = "Model cannot be empty")
     private String model;
+    @Range(min=1900, max=2099, message = "Model Year must be between 1900 and 2099")
     private Integer modelYear;
+    @Size(min=3, max=5, message = "You are very sneaky, Choose one of the predefined options")
     private String wheelSize;
-    @Size(max=20)
+    @Size(min=4, max=15, message = "You are very sneaky, Choose one of the predefined options")
     private String frameType;
-    @Size(max=20)
+    @Size(max=100, message = "Build Kit cannot be longer than 100 characters")
     private String buildKit;
     private LocalDateTime created;
     private LocalDateTime updated;
@@ -41,7 +48,7 @@ public class Bike {
         this.created = LocalDateTime.now();
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

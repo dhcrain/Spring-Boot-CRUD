@@ -7,50 +7,62 @@
     <link rel="stylesheet" th:href="@{/app.css}" />
 </head>
 <body>
+    <div class="container">
 
-<h1 th:text="${bike.make}+' '+${bike.model}">make model</h1>
-<div class="row">
-    <div class="col-sm-6">
-        <table>
-            <tr>
-                <th>Make</th>
-                <td th:text="${bike.make}"></td>
-            </tr>
-            <tr>
-                <th>Model</th>
-                <td th:text="${bike.model}"></td>
-            </tr>
-            <tr>
-                <th>Year</th>
-                <td th:text="${bike.modelYear}"></td>
-            </tr>
-            <tr>
-                <th>Wheel Size</th>
-                <td th:text="${bike.wheelSize}"></td>
-            </tr>
-            <tr>
-                <th>Frame Type</th>
-                <td th:text="${bike.frameType}"></td>
-            </tr>
-            <tr>
-                <th>Build Kit</th>
-                <td th:text="${bike.buildKit}"></td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td th:text="${{bike.created}}"></td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td th:text="${{bike.updated}}"></td>
-            </tr>
-        </table>
+        <h1>Confirm edits:</h1>
+        <p>
+            <a th:href="@{/}" class="btn btn-success btn-lrg">Correct</a>
+        </p>
+        <p>
+            <a th:href="@{'/edit/' + ${bike.id}}" class="btn btn-warning btn-lrg">Edit Again</a>
+        </p>
 
+
+        <h2 th:text="${bike.make}+' '+${bike.model}">make model</h2>
+        <div class="row">
+            <div class="col-sm-5">
+                <table class="table">
+                    <tr>
+                        <th>Make</th>
+                        <td th:text="${bike.make}"></td>
+                    </tr>
+                    <tr>
+                        <th>Model</th>
+                        <td th:text="${bike.model}"></td>
+                    </tr>
+                    <tr>
+                        <th>Year</th>
+                        <td th:text="${bike.modelYear}"></td>
+                    </tr>
+                    <tr>
+                        <th>Wheel Size</th>
+                        <td th:text="${bike.wheelSize}"></td>
+                    </tr>
+                    <tr>
+                        <th>Frame Type</th>
+                        <td th:text="${bike.frameType}"></td>
+                    </tr>
+                    <tr>
+                        <th>Build Kit</th>
+                        <td th:text="${bike.buildKit}"></td>
+                    </tr>
+                    <tr>
+                        <th>Created</th>
+                        <td th:text="${{bike.created}}"></td>
+                    </tr>
+                    <tr>
+                        <th>Updated</th>
+                        <td th:text="${{bike.updated}}"></td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="col-sm-7">
+                <img th:src="@{'/static/bike_portal.gif'}" alt="Bike Portal" class="bike-gif"/>
+            </div>
+
+        </div>
     </div>
-
-    <div class="col-sm-6">
-        <h2>bike picture?</h2>
-    </div>
-</div>
 </body>
 </html>

@@ -4,21 +4,15 @@ import com.firstweek.model.Bike;
 import com.firstweek.repository.BikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 
 @Controller
@@ -31,18 +25,25 @@ public class BikeContoller {
     public String bikes(@RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNumber,
                         @RequestParam(value = "q", required = false) String q,
                         Model model) {
+        Page bikePage;
         Pageable pageable = new PageRequest(pageNumber-1, 5);
-        Page bikePage = bikeRepository.findAll(pageable);
-        model.addAttribute("bikeList", bikePage);
+        boolean isQ = (q != null);
 
-        if (q != null) {
-            model.addAttribute("bikeList", bikeRepository.findByMakeContainingIgnoreCase(q, pageable));
+        if (isQ) {
+            bikePage = bikeRepository.findByMakeContainingIgnoreCase(q, pageable);
+            model.addAttribute("bikeList", bikePage);
+            model.addAttribute("q", q);
+
+        } else {
+            bikePage = bikeRepository.findAllByOrderByIdDesc(pageable);
+            model.addAttribute("bikeList", bikePage);
         }
-
-//        Why does Thymeleaf not like isFirst and isLast ?????
+        // Why does Thymeleaf not like isFirst and isLast ?????
         model.addAttribute("firstPage", bikePage.isFirst());
         model.addAttribute("lastPage", bikePage.isLast());
-        model.addAttribute("bike", new Bike());
+        model.addAttribute("isQ", isQ);
+        model.addAttribute("bikeListHasContent", bikePage.hasContent());
+        model.addAttribute("bikeForm", new Bike());
         return "index";
     }
 
@@ -54,9 +55,12 @@ public class BikeContoller {
     }
 
     @RequestMapping(value="/addBike", method = RequestMethod.POST)
-    public String addBike(@Valid Bike bike) {
-        bike.setCreated(LocalDateTime.now());
-        bikeRepository.save(bike);
+    public String addBike(@Valid @ModelAttribute("bikeForm") Bike bikeForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "editBike";
+        }
+        bikeForm.setCreated(LocalDateTime.now());
+        bikeRepository.save(bikeForm);
         return "redirect:/";
     }
 
@@ -68,16 +72,19 @@ public class BikeContoller {
 
     @RequestMapping(value="/edit/{id}", method = RequestMethod.GET)
     public String editBike(@PathVariable("id") int id, Model model) {
-        model.addAttribute("bike", bikeRepository.findOne(id));
+        model.addAttribute("bikeForm", bikeRepository.findOne(id));
         return "editBike";
     }
 
     @RequestMapping(value="/edit/{id}", method = RequestMethod.POST)
-    public String editBike(@Valid Bike bike, @PathVariable("id") int id) {
-        bike.setId(id);
-        bike.setCreated(bikeRepository.findOne(id).getCreated());
-        bike.setUpdated(LocalDateTime.now());
-        bikeRepository.save(bike);
+    public String editBike(@Valid @ModelAttribute("bikeForm") Bike bikeForm, BindingResult bindingResult, @PathVariable("id") int id) {
+        if (bindingResult.hasErrors()) {
+            return "editBike";
+        }
+        bikeForm.setId(id);
+        bikeForm.setCreated(bikeRepository.findOne(id).getCreated());
+        bikeForm.setUpdated(LocalDateTime.now());
+        bikeRepository.save(bikeForm);
         return "redirect:/bike/" + id;
     }
 
