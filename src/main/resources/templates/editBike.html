@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>FirstWeek</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <link rel="stylesheet" th:href="@{/app.css}" />
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Edit Bike</h1>
+
+    <form action="#" th:action="@{'/edit/' + ${bike.id}}" th:object="${bike}" method="post">
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label th:for="*{make}">Make</label>
+                <input type="text" th:field="*{make}" class="form-control"/>
+            </div>
+            <div class="form-group col-xs-6">
+                <label th:for="*{model}">Model</label>
+                <input type="text" th:field="*{model}" class="form-control"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label th:for="*{modelYear}">Model Year</label>
+                <input type="number" min="1900" max="2099" step="1" th:field="*{modelYear}" class="form-control"/>
+            </div>
+            <div class="form-group col-xs-4">
+                <label th:for="*{wheelSize}">Wheel Size</label>
+                <select th:field="*{wheelSize}" class="form-control">
+                    <option value='24"'>24"</option>
+                    <option value='26"'>26"</option>
+                    <option value='27.5"'>27.5"</option>
+                    <option value='29"'>29"</option>
+                    <option value='700c'>700c</option>
+                    <option value='Other'>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label th:for="*{frameType}">Frame Type</label>
+                <select class="form-control" th:field="*{frameType}">
+                    <option value="Hard Tail">Hard Tail</option>
+                    <option value="Full Suspension">Full Suspension</option>
+                    <option value="Road">Road</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label th:for="*{buildKit}">Build Kit</label>
+            <input type="text" th:field="*{buildKit}" class="form-control"/>
+        </div>
+
+        <input type="submit" value="Submit" class="btn btn-success btn-lrg"/>
+    </form>
+
+</div>
+</body>
+
+</html>
