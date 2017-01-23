@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ public class BikeContoller {
         return "bike";
     }
 
+    
     @RequestMapping(value="/addBike", method = RequestMethod.POST)
     public String addBike(@Valid @ModelAttribute("bikeForm") Bike bikeForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -77,7 +79,9 @@ public class BikeContoller {
     }
 
     @RequestMapping(value="/edit/{id}", method = RequestMethod.POST)
-    public String editBike(@Valid @ModelAttribute("bikeForm") Bike bikeForm, BindingResult bindingResult, @PathVariable("id") int id) {
+    public String editBike(@Valid @ModelAttribute("bikeForm") Bike bikeForm,
+                           BindingResult bindingResult,
+                           @PathVariable("id") int id) {
         if (bindingResult.hasErrors()) {
             return "editBike";
         }
